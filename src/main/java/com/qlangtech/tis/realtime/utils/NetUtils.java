@@ -1,19 +1,19 @@
 /**
- *   Licensed to the Apache Software Foundation (ASF) under one
- *   or more contributor license agreements.  See the NOTICE file
- *   distributed with this work for additional information
- *   regarding copyright ownership.  The ASF licenses this file
- *   to you under the Apache License, Version 2.0 (the
- *   "License"); you may not use this file except in compliance
- *   with the License.  You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.qlangtech.tis.realtime.utils;
@@ -21,12 +21,21 @@ package com.qlangtech.tis.realtime.utils;
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.net.*;
-import java.util.*;
-import java.util.regex.Pattern;
-
 import static java.util.Collections.emptyList;
+
+import java.io.IOException;
+import java.net.Inet6Address;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.ServerSocket;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+import java.util.Enumeration;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.regex.Pattern;
 
 /**
  * @author 百岁（baisui@qlangtech.com）
@@ -39,7 +48,7 @@ public class NetUtils {
     private static final String NETWORK_PRIORITY_DEFAULT = "default";
     private static final String NETWORK_PRIORITY_INNER = "inner";
     private static final String NETWORK_PRIORITY_OUTER = "outer";
-   // private static final Logger logger = LoggerFactory.getLogger(NetUtils.class);
+    // private static final Logger logger = LoggerFactory.getLogger(NetUtils.class);
     private static InetAddress LOCAL_ADDRESS = null;
     private static volatile String HOST_ADDRESS;
 
@@ -112,6 +121,35 @@ public class NetUtils {
     }
 
     /**
+     * host 是否能够ping通
+     */
+    public static boolean isReachable(String host) {
+        try {
+            InetAddress address = InetAddress.getByName(host);
+            if (isReachable(address)) {
+                return true;
+            }
+        } catch (UnknownHostException e) {
+
+        }
+        return false;
+    }
+
+    private static boolean isReachable(InetAddress address) {
+        Optional<InetAddress> addressOp = toValidAddress(address);
+        if (addressOp.isPresent()) {
+            try {
+                if (addressOp.get().isReachable(5000)) {
+                    return true;
+                }
+            } catch (IOException e) {
+                // logger.warn("test address id reachable io exception", e);
+            }
+        }
+        return false;
+    }
+
+    /**
      * Find first valid IP from local network card
      *
      * @return first valid local IP
@@ -123,24 +161,32 @@ public class NetUtils {
         InetAddress localAddress = null;
         NetworkInterface networkInterface = findNetworkInterface();
         Enumeration<InetAddress> addresses = networkInterface.getInetAddresses();
+
         while (addresses.hasMoreElements()) {
-            Optional<InetAddress> addressOp = toValidAddress(addresses.nextElement());
-            if (addressOp.isPresent()) {
-                try {
-                    if (addressOp.get().isReachable(100)) {
-                        LOCAL_ADDRESS = addressOp.get();
-                        return LOCAL_ADDRESS;
-                    }
-                } catch (IOException e) {
-                   // logger.warn("test address id reachable io exception", e);
-                }
+            localAddress = addresses.nextElement();
+            if (isReachable(localAddress)) {
+                Optional<InetAddress> addressOp = toValidAddress(localAddress);
+                LOCAL_ADDRESS = addressOp.get();
+                return LOCAL_ADDRESS;
             }
+
+//            Optional<InetAddress> addressOp = toValidAddress(addresses.nextElement());
+//            if (addressOp.isPresent()) {
+//                try {
+//                    if (addressOp.get().isReachable(100)) {
+//                        LOCAL_ADDRESS = addressOp.get();
+//                        return LOCAL_ADDRESS;
+//                    }
+//                } catch (IOException e) {
+//                    // logger.warn("test address id reachable io exception", e);
+//                }
+//            }
         }
 
         try {
             localAddress = InetAddress.getLocalHost();
         } catch (UnknownHostException e) {
-          //  logger.warn("InetAddress get LocalHost exception", e);
+            //  logger.warn("InetAddress get LocalHost exception", e);
         }
         Optional<InetAddress> addressOp = toValidAddress(localAddress);
         if (addressOp.isPresent()) {
@@ -169,7 +215,7 @@ public class NetUtils {
             try {
                 return InetAddress.getByName(addr.substring(0, i) + '%' + address.getScopeId());
             } catch (UnknownHostException e) {
-              //  logger.debug("Unknown IPV6 address: ", e);
+                //  logger.debug("Unknown IPV6 address: ", e);
             }
         }
         return address;
@@ -207,7 +253,7 @@ public class NetUtils {
         try {
             validNetworkInterfaces = getValidNetworkInterfaces();
         } catch (SocketException e) {
-           // logger.warn("ValidNetworkInterfaces exception", e);
+            // logger.warn("ValidNetworkInterfaces exception", e);
         }
 
         NetworkInterface result = null;
