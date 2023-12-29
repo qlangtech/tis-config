@@ -7,4 +7,5 @@ package com.qlangtech.tis.job.common;
 public interface JobParams {
     String KEY_TASK_ID = "taskid";
     String KEY_COLLECTION = "app";
+    String KEY_LOG_TYPE = "logtype";
 }
