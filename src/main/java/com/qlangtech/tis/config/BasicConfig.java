@@ -15,6 +15,8 @@ public abstract class BasicConfig {
      */
     public static final String KEY_ENV_TIS_CFG_BUNDLE_PATH = "tisCfgBundlePath";
 
+    public static final String KEY_DEFAULT_TIS_CFG_BUNDLE_PATH = "tis-web-config/config";
+
     // 组装节点
     protected abstract String getAsbHost();
 
