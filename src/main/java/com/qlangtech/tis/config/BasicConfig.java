@@ -10,6 +10,10 @@ import java.util.ServiceLoader;
  **/
 public abstract class BasicConfig {
     public static final int LogFlumeAddressPORT = 41414;
+    /**
+     * 可在环境变量中设置，当启动flink JOB MANAGER时候 可以重新定义 Config 从本地加载的资源的classpath路径
+     */
+    public static final String KEY_ENV_TIS_CFG_BUNDLE_PATH = "tisCfgBundlePath";
 
     // 组装节点
     protected abstract String getAsbHost();
