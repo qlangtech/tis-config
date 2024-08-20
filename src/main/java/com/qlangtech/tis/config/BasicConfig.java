@@ -18,11 +18,14 @@ public abstract class BasicConfig {
 
     public static final String KEY_DEFAULT_TIS_CFG_BUNDLE_PATH = "tis-web-config/config";
 
-    public static boolean inDockerContainer(){
+    public static boolean inDockerContainer() {
         return Boolean.parseBoolean(System.getenv(BasicConfig.TIS_K8S_ENV));
     }
+
     // 组装节点
     protected abstract String getAsbHost();
+
+    protected abstract String getTISHost();
 
     public abstract Map<String, String> getAllKV();
 
