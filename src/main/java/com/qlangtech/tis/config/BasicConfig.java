@@ -25,7 +25,7 @@ public abstract class BasicConfig {
     // 组装节点
     protected abstract String getAsbHost();
 
-    protected abstract String getTISHost();
+    public abstract String getTISHost();
 
     public abstract Map<String, String> getAllKV();
 
@@ -45,6 +45,8 @@ public abstract class BasicConfig {
     public static String getAssembleHost() {
         return getBaseConfig().getAsbHost();
     }
-
+    public static String getTisHost() {
+        return getBaseConfig().getTISHost();
+    }
 
 }
