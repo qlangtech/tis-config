@@ -5,7 +5,6 @@ import java.util.Objects;
 import java.util.ServiceLoader;
 
 /**
- * @author: 百岁（baisui@qlangtech.com）
  * @create: 2023-08-07 17:39
  **/
 public abstract class BasicConfig {

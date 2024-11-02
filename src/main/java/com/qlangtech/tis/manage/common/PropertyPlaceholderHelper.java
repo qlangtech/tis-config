@@ -18,7 +18,11 @@
 package com.qlangtech.tis.manage.common;
 
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * Utility class for working with Strings that have placeholder values in them.
@@ -30,8 +34,6 @@ import java.util.*;
  * or using a {@link PlaceholderResolver}.
  * @since 3.0
  *
- * @author 百岁（baisui@qlangtech.com）
- * @date 2019年1月17日
  */
 public class PropertyPlaceholderHelper {
 

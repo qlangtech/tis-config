@@ -18,8 +18,6 @@
 
 package com.qlangtech.tis.realtime.utils;
 
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
 
 import static java.util.Collections.emptyList;
 
@@ -37,10 +35,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
-/**
- * @author 百岁（baisui@qlangtech.com）
- * @date 2016年4月14日
- */
 public class NetUtils {
 
 

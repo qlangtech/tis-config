@@ -1,7 +1,6 @@
 package com.qlangtech.tis.job.common;
 
 /**
- * @author: 百岁（baisui@qlangtech.com）
  * @create: 2023-08-07 18:25
  **/
 public interface JobParams {
