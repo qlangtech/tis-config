@@ -34,6 +34,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 
 public class NetUtils {
 
@@ -83,6 +85,20 @@ public class NetUtils {
             // Could not get a free port. Return default port 0.
         }
         return port;
+    }
+
+    public static boolean isPortAvailable(String host, int port) {
+        // 设置连接超时时间（单位：毫秒）
+        final int TIMEOUT_MS = 3000;
+
+        try (Socket socket = new Socket()) {
+            // 创建套接字并尝试连接
+            socket.connect(new InetSocketAddress(host, port), TIMEOUT_MS);
+            return true;  // 连接成功
+        } catch (IOException e) {
+            // 连接失败（超时/拒绝/网络错误）
+            return false;
+        }
     }
 
     /**
