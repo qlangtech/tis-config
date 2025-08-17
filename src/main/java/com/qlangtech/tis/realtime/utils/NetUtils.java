@@ -27,6 +27,7 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.ServerSocket;
 import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
 import java.util.LinkedList;
@@ -95,9 +96,11 @@ public class NetUtils {
             // 创建套接字并尝试连接
             socket.connect(new InetSocketAddress(host, port), TIMEOUT_MS);
             return true;  // 连接成功
-        } catch (IOException e) {
+        } catch (SocketTimeoutException e) {
             // 连接失败（超时/拒绝/网络错误）
             return false;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
