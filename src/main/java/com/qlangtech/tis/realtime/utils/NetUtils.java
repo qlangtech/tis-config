@@ -22,6 +22,7 @@ package com.qlangtech.tis.realtime.utils;
 import static java.util.Collections.emptyList;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -99,7 +100,9 @@ public class NetUtils {
         } catch (SocketTimeoutException e) {
             // 连接失败（超时/拒绝/网络错误）
             return false;
-        } catch (IOException e) {
+        } catch (ConnectException e) {
+            return false;
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -183,17 +186,17 @@ public class NetUtils {
                 return LOCAL_ADDRESS;
             }
 
-//            Optional<InetAddress> addressOp = toValidAddress(addresses.nextElement());
-//            if (addressOp.isPresent()) {
-//                try {
-//                    if (addressOp.get().isReachable(100)) {
-//                        LOCAL_ADDRESS = addressOp.get();
-//                        return LOCAL_ADDRESS;
-//                    }
-//                } catch (IOException e) {
-//                    // logger.warn("test address id reachable io exception", e);
-//                }
-//            }
+            //            Optional<InetAddress> addressOp = toValidAddress(addresses.nextElement());
+            //            if (addressOp.isPresent()) {
+            //                try {
+            //                    if (addressOp.get().isReachable(100)) {
+            //                        LOCAL_ADDRESS = addressOp.get();
+            //                        return LOCAL_ADDRESS;
+            //                    }
+            //                } catch (IOException e) {
+            //                    // logger.warn("test address id reachable io exception", e);
+            //                }
+            //            }
         }
 
         try {
@@ -240,10 +243,7 @@ public class NetUtils {
             return false;
         }
         String name = address.getHostAddress();
-        return (name != null
-                && IP_PATTERN.matcher(name).matches()
-                && !ANY_HOST_VALUE.equals(name)
-                && !LOCAL_HOST_VALUE.equals(name));
+        return (name != null && IP_PATTERN.matcher(name).matches() && !ANY_HOST_VALUE.equals(name) && !LOCAL_HOST_VALUE.equals(name));
     }
 
     /**
@@ -313,9 +313,6 @@ public class NetUtils {
      * @throws SocketException SocketException if an I/O error occurs.
      */
     public static boolean ignoreNetworkInterface(NetworkInterface networkInterface) throws SocketException {
-        return networkInterface == null
-                || networkInterface.isLoopback()
-                || networkInterface.isVirtual()
-                || !networkInterface.isUp();
+        return networkInterface == null || networkInterface.isLoopback() || networkInterface.isVirtual() || !networkInterface.isUp();
     }
 }
