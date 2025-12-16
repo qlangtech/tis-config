@@ -55,14 +55,13 @@ public class NetUtils {
     public static final String LOCAL_HOST_VALUE = "127.0.0.1";
 
     public static void main(String[] args) throws Exception {
-        System.out.println(getHostname());
+        // 调试：打印所有有效的网络接口和地址
+       // System.out.println("=== 所有有效的网络接口 ===");
 
-        System.out.println(getHost());
 
-        System.out.println("list getDisplayName");
-        for (NetworkInterface networkInterface : getValidNetworkInterfaces()) {
-            System.out.println(networkInterface.getDisplayName());
-        }
+        System.out.println("\n=== 结果 ===");
+        System.out.println("getHostname(): " + getHostname());
+        System.out.println("getHost(): " + getHost());
     }
 
     /**
@@ -281,6 +280,29 @@ public class NetUtils {
         if (null != result) {
             return result;
         }
+
+        // 优先选择物理网卡（en0, eth0等），而不是虚拟隧道接口（utun, tun, tap等）
+        for (NetworkInterface networkInterface : validNetworkInterfaces) {
+            String name = networkInterface.getName();
+            // 优先选择以 en, eth, wlan 开头的物理网卡接口
+            if (name.startsWith("en") || name.startsWith("eth") || name.startsWith("wlan")) {
+                return networkInterface;
+            }
+        }
+
+        // 如果没有找到物理网卡，再排除虚拟隧道接口
+        for (NetworkInterface networkInterface : validNetworkInterfaces) {
+            String name = networkInterface.getName();
+            // 跳过虚拟隧道接口：utun, tun, tap, vmnet, vboxnet等
+            // 以及 Docker(docker0), libvirt(virbr), 容器(veth)等虚拟接口
+            if (!name.startsWith("utun") && !name.startsWith("tun") && !name.startsWith("tap")
+                && !name.startsWith("vmnet") && !name.startsWith("vboxnet")
+                && !name.startsWith("docker") && !name.startsWith("virbr") && !name.startsWith("veth")) {
+                return networkInterface;
+            }
+        }
+
+        // 如果都没找到，返回第一个
         return validNetworkInterfaces.get(0);
     }
 
