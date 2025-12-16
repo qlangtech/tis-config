@@ -13,7 +13,7 @@
     <groupId>com.qlangtech.tis</groupId>
     <artifactId>tis-config</artifactId>
     <name>tis-config</name>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
 
     <scm>
         <connection>scm:git:ssh://github.com/qlangtech/tis-config.git</connection>
